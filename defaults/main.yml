@@ -1,0 +1,10 @@
+---
+# defaults file for odoo
+
+odoo_workers: 2
+odoo_cron_threads: 2
+odoo_cluster: false
+odoo_update: true
+odoo_disable_database_manager: true
+odoo_list_db: false
+odoo_proxy_mode: true

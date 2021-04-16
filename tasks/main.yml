@@ -1,0 +1,128 @@
+---
+# tasks file for odoo
+
+- name: install ubuntu packages
+  apt:
+    name:
+      - build-essential
+      - git      
+      - virtualenv
+      - pipenv
+      - poppler-utils
+      - bzip2      
+      - curl      
+      - fonts-freefont-ttf
+      - fonts-ubuntu
+      - fontconfig
+      - wkhtmltopdf
+      - libcairo2-dev
+      - libcups2-dev      
+      - libffi-dev
+      - libfontconfig-dev
+      - libfreetype6-dev
+      - libssl-dev
+      - libldap-dev
+      - libxml2-dev
+      - libxslt1-dev
+      - libpq-dev
+      - libhttp-parser-dev
+      - libsasl2-dev
+      - libmagickwand-dev
+    state: present
+
+- name: copy imagemagick policy
+  copy:
+    src: files/ImageMagick-6/policy.xml
+    dest: /etc/ImageMagick-6/policy.xml
+
+- name: check odoo server checkout
+  stat:
+    path: /home/odoo/odoo-oerp-14.0
+  register: checkout_dir
+
+- name: clone odoo server
+  become_user: odoo
+  become: yes
+  shell: git clone -b 14.0-oerp https://github.com/oerp-at/odoo-oerp-14.0.git
+  args:
+    chdir: /home/odoo
+  when: checkout_dir.stat.isdir is undefined
+
+- name: update odoo server
+  become_user: odoo
+  become: yes
+  shell: git pull
+  args:
+    chdir: /home/odoo/odoo-oerp-14.0
+  notify: update-odoo
+
+- name: update odoo server submodules
+  become_user: odoo
+  become: yes
+  shell: git submodule update --init --remote
+  args:
+    chdir: /home/odoo/odoo-oerp-14.0
+   
+- name: checkout submodules
+  become_user: odoo
+  become: yes
+  shell: git submodule foreach 'git checkout 14.0-oerp'
+  args:
+    chdir: /home/odoo/odoo-oerp-14.0
+
+- name: pull changes of submodules
+  become_user: odoo
+  become: yes
+  shell: git submodule foreach 'git pull'
+  args:
+    chdir: /home/odoo/odoo-oerp-14.0
+
+- name: update python environment
+  become_user: odoo
+  become: yes
+  when: odoo_update
+  shell: pipenv update
+  tags: 
+  - slow
+  args:
+    chdir: /home/odoo/odoo-oerp-14.0
+  
+- name: check if ~/.local/etc exist
+  become_user: odoo
+  become: yes
+  file:    
+    path: /home/odoo/.local/etc
+    recurse: yes
+    state: directory
+
+- name: check if ~/log exist
+  become_user: odoo
+  become: yes
+  file:    
+    path: /home/odoo/log
+    recurse: yes
+    state: directory
+
+- name: copy odoo service config
+  become_user: odoo
+  become: yes
+  template:
+    src: templates/odoo.conf.j2
+    dest: /home/odoo/.local/etc/odoo.conf
+        
+- name: copy odoo-cron service config
+  template:
+    src: templates/odoo-cron.conf.j2
+    dest: /home/odoo/.local/etc/odoo-cron.conf
+    
+- name: copy odoo service
+  copy:
+    src: files/odoo.service
+    dest: /etc/systemd/system/odoo.service
+
+- name: copy odoo cron-service
+  copy:
+    src: files/odoo-cron.service
+    dest: /etc/systemd/system/odoo-cron.service
+
+
