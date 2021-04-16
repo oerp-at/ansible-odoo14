@@ -16,7 +16,7 @@ Role Variables
 | odoo_disable_database_manager | Don't show password manager                  | true     |
 | odoo_list_db                  | Don't list databases on login window         | true     |
 | odoo_proxy_mode               | Is Odoo used behind a proxy                  | 2        |
-| odoo_cron_threds              | Define background processing threads         | 2        |
+| odoo_cron_threads             | Define background processing threads         | 2        |
 | db_name                       | Used database name                           |          |
 | db_user                       | Database user                                |          |
 | db_host                       | Postgresql database host                     |          |
