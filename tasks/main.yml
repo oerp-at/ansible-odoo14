@@ -3,6 +3,7 @@
 
 - name: install ubuntu packages
   apt:
+    install_recommends: no
     name:
       - build-essential
       - git      
@@ -14,7 +15,6 @@
       - fonts-freefont-ttf
       - fonts-ubuntu
       - fontconfig
-      - wkhtmltopdf
       - libcairo2-dev
       - libcups2-dev      
       - libffi-dev
@@ -55,13 +55,14 @@
   args:
     chdir: /home/odoo/odoo-oerp-14.0
   notify: update-odoo
-
+  
 - name: update odoo server submodules
   become_user: odoo
   become: yes
   shell: git submodule update --init --remote
   args:
     chdir: /home/odoo/odoo-oerp-14.0
+  when: checkout_dir.stat.isdir is undefined
    
 - name: checkout submodules
   become_user: odoo
