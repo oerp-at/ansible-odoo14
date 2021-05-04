@@ -2,8 +2,7 @@
 # tasks file for odoo
 
 - name: install ubuntu packages
-  apt:
-    install_recommends: no
+  apt:    
     name:
       - build-essential
       - git      
@@ -15,6 +14,7 @@
       - fonts-freefont-ttf
       - fonts-ubuntu
       - fontconfig
+      - python3-dev
       - libcairo2-dev
       - libcups2-dev      
       - libffi-dev
@@ -84,7 +84,7 @@
   when: odoo_update
   shell: pipenv update
   tags: 
-  - slow
+  - full
   args:
     chdir: /home/odoo/odoo-oerp-14.0
   
