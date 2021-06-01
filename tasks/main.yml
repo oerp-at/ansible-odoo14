@@ -62,7 +62,6 @@
   shell: git submodule update --init --remote
   args:
     chdir: /home/odoo/odoo-oerp-14.0
-  when: checkout_dir.stat.isdir is undefined
    
 - name: checkout submodules
   become_user: odoo
