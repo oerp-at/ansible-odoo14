@@ -1,15 +1,6 @@
 ---
 # handlers file for odoo
 
-- name: install modules
-  become_user: odoo
-  when: odoo_update|bool
-  become: yes
-  shell: pipenv run ./odoo-bin install
-  args:
-    chdir: /home/odoo/odoo-oerp-14.0/odoo  
-  listen: "update-odoo"
-
 - name: update databases 
   become_user: odoo
   when: odoo_update|bool and not odoo_cluster|bool

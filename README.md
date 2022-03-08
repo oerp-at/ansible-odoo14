@@ -21,7 +21,11 @@ Role Variables
 | db_user                       | Database user                                |          |
 | db_host                       | Postgresql database host                     |          |
 | db_password                   | Database password                            |          |
-
+[ odoo_queue                    | Enable odoo queue                            | false    |
+| odoo_queue_root               | Workers used for root queue                  | 1        |
+| odoo_src                      | https://github.com/oerp-at/odoo-oerp-14.0.git|          |
+| odoo_dist                     | Odoo distribution                            | 14.0-oerp|
+| odoo_branch                   | Odoo branch                                  | 14.0-oerp|
 
 Dependencies
 ------------

@@ -43,7 +43,7 @@
 - name: clone odoo server
   become_user: odoo
   become: yes
-  shell: git clone -b 14.0-oerp https://github.com/oerp-at/odoo-oerp-14.0.git
+  shell: git clone -b {{ odoo_dist }} {{ odoo_src }}
   args:
     chdir: /home/odoo
   when: checkout_dir.stat.isdir is undefined
@@ -111,6 +111,8 @@
     dest: /home/odoo/.local/etc/odoo.conf
         
 - name: copy odoo-cron service config
+  become_user: odoo
+  become: yes
   template:
     src: templates/odoo-cron.conf.j2
     dest: /home/odoo/.local/etc/odoo-cron.conf
