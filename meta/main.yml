@@ -1,7 +1,7 @@
 galaxy_info:
-  author: funkring
-  description: Odoo8 Installation
-  company: funkring
+  author: Martin Reisenhofer
+  description: Odoo8
+  company: reisenhofer.biz
 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value

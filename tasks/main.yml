@@ -84,7 +84,7 @@
   when: odoo_update
   shell: pipenv update
   tags: 
-  - slow
+  - full
   args:
     chdir: /home/odoo/odoo-oerp-14.0
   
