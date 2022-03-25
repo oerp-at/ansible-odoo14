@@ -8,3 +8,7 @@ odoo_update: true
 odoo_disable_database_manager: true
 odoo_list_db: false
 odoo_proxy_mode: true
+odoo_queue: false
+odoo_src: https://github.com/oerp-at/odoo-oerp-14.0.git
+odoo_dist: 14.0-oerp
+odoo_dist: 14.0-oerp

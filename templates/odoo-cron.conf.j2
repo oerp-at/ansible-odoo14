@@ -44,3 +44,11 @@ xmlrpc = True
 xmlrpc_port = 10069
 xmlrpcs = False
 data_dir = /home/odoo
+{% if odoo_queue %}
+server_wide_modules = web,queue_job
+{% endif %}
+
+{% if odoo_queue_root is defined %}
+[queue_job]
+channels = root:{{ odoo_queue_root }}
+{% endif %}

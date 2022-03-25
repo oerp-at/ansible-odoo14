@@ -2,8 +2,7 @@
 # tasks file for odoo
 
 - name: install ubuntu packages
-  apt:
-    install_recommends: no
+  apt:    
     name:
       - build-essential
       - git      
@@ -15,6 +14,7 @@
       - fonts-freefont-ttf
       - fonts-ubuntu
       - fontconfig
+      - python3-dev
       - libcairo2-dev
       - libcups2-dev      
       - libffi-dev
@@ -43,7 +43,7 @@
 - name: clone odoo server
   become_user: odoo
   become: yes
-  shell: git clone -b 14.0-oerp https://github.com/oerp-at/odoo-oerp-14.0.git
+  shell: git clone -b {{ odoo_dist }} {{ odoo_src }}
   args:
     chdir: /home/odoo
   when: checkout_dir.stat.isdir is undefined
@@ -62,7 +62,6 @@
   shell: git submodule update --init --remote
   args:
     chdir: /home/odoo/odoo-oerp-14.0
-  when: checkout_dir.stat.isdir is undefined
    
 - name: checkout submodules
   become_user: odoo
@@ -112,6 +111,8 @@
     dest: /home/odoo/.local/etc/odoo.conf
         
 - name: copy odoo-cron service config
+  become_user: odoo
+  become: yes
   template:
     src: templates/odoo-cron.conf.j2
     dest: /home/odoo/.local/etc/odoo-cron.conf
