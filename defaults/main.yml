@@ -9,6 +9,11 @@ odoo_disable_database_manager: true
 odoo_list_db: false
 odoo_proxy_mode: true
 odoo_queue: false
-odoo_src: https://github.com/oerp-at/odoo-oerp-14.0.git
-odoo_dist: 14.0-oerp
-odoo_dist: 14.0-oerp
+odoo_repo: https://github.com/oerp-at/odoo-oerp-14.0-dist.git
+odoo_version: 14.0-oerp
+odoo_user: odoo
+odoo_instance: odoo-14
+odoo_cron_port: 10069
+odoo_port: 8069
+odoo_port_longpolling: 8072
+odoo_syslog: true

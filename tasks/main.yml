@@ -35,96 +35,59 @@
     src: files/ImageMagick-6/policy.xml
     dest: /etc/ImageMagick-6/policy.xml
 
-- name: check odoo server checkout
-  stat:
-    path: /home/odoo/odoo-oerp-14.0
-  register: checkout_dir
-
-- name: clone odoo server
-  become_user: odoo
-  become: yes
-  shell: git clone -b {{ odoo_dist }} {{ odoo_src }}
-  args:
-    chdir: /home/odoo
-  when: checkout_dir.stat.isdir is undefined
-
-- name: update odoo server
-  become_user: odoo
-  become: yes
-  shell: git pull
-  args:
-    chdir: /home/odoo/odoo-oerp-14.0
-  notify: update-odoo
-  
-- name: update odoo server submodules
-  become_user: odoo
-  become: yes
-  shell: git submodule update --init --remote
-  args:
-    chdir: /home/odoo/odoo-oerp-14.0
-   
-- name: checkout submodules
-  become_user: odoo
-  become: yes
-  shell: git submodule foreach 'git checkout 14.0-oerp'
-  args:
-    chdir: /home/odoo/odoo-oerp-14.0
-
-- name: pull changes of submodules
-  become_user: odoo
-  become: yes
-  shell: git submodule foreach 'git pull'
-  args:
-    chdir: /home/odoo/odoo-oerp-14.0
+- name: get odoo source
+  git:
+    repo: {{ odoo_repo }}
+    dest: {{ odoo_dir }}
+    version: {{ odoo_version }}
+  register: odoo_update
 
 - name: update python environment
-  become_user: odoo
+  become_user: "{{ odoo_user }}"
   become: yes
   when: odoo_update
   shell: pipenv update
   tags: 
   - full
   args:
-    chdir: /home/odoo/odoo-oerp-14.0
+    chdir: {{ odoo_dir }}
   
 - name: check if ~/.local/etc exist
-  become_user: odoo
+  become_user: "{{ odoo_user }}"
   become: yes
   file:    
-    path: /home/odoo/.local/etc
+    path: "{{ odoo_user_home }}/.local/etc"
     recurse: yes
     state: directory
 
 - name: check if ~/log exist
-  become_user: odoo
+  become_user: "{{ odoo_user }}"
   become: yes
   file:    
-    path: /home/odoo/log
+    path: "{{ odoo_user_home }}/odoo/log"
     recurse: yes
     state: directory
 
 - name: copy odoo service config
-  become_user: odoo
+  become_user: "{{ odoo_user }}"
   become: yes
   template:
-    src: templates/odoo.conf.j2
-    dest: /home/odoo/.local/etc/odoo.conf
+    src: templates/odoo.conf
+    dest: "{{ odoo_user_home }}/.local/etc/{{ odoo_service }}.conf"
         
 - name: copy odoo-cron service config
-  become_user: odoo
+  become_user: "{{ odoo_user }}"
   become: yes
   template:
-    src: templates/odoo-cron.conf.j2
-    dest: /home/odoo/.local/etc/odoo-cron.conf
+    src: templates/odoo-cron.conf
+    dest: "{{ odoo_user_home }}/.local/etc/{{ odoo_service }}-cron.conf"
     
 - name: copy odoo service
-  copy:
+  template:
     src: files/odoo.service
-    dest: /etc/systemd/system/odoo.service
+    dest: /etc/systemd/system/{{ odoo_service }}.service
 
 - name: copy odoo cron-service
-  copy:
+  template:
     src: files/odoo-cron.service
-    dest: /etc/systemd/system/odoo-cron.service
-
-
+    dest: /etc/systemd/system/{{ odoo_service }}-cron.service

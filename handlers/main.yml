@@ -5,18 +5,18 @@
   become_user: odoo
   when: odoo_update|bool and not odoo_cluster|bool
   become: yes
-  shell: pipenv run ./odoo-bin update -dc /home/odoo/.local/etc/odoo.conf
+  shell: "pipenv run ./odoo-bin update -dc {{ odoo_user_home }}/.local/etc/{{ odoo_instance }}.conf"
   args:
-    chdir: /home/odoo/odoo-oerp-14.0/odoo
+    chdir: {{ odoo_dir }}
   listen: "update-odoo"
 
 - name: update databases for cluster
   become_user: odoo
   when: odoo_update|bool and odoo_cluster|bool
   become: yes
-  shell: pipenv run ./odoo-bin update --db-all -dc /home/odoo/.local/etc/odoo.conf
+  shell: "pipenv run ./odoo-bin update --db-all -dc {{ odoo_user_home }}/.local/etc/{{ odoo_instance }}.conf"
   args:
-    chdir: /home/odoo/odoo-oerp-14.0/odoo
+    chdir: {{ odoo_dir }}
   async: 3600
   poll: 5
   listen: "update-odoo"
