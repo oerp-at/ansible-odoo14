@@ -35,22 +35,26 @@
     src: files/ImageMagick-6/policy.xml
     dest: /etc/ImageMagick-6/policy.xml
 
-- name: get odoo source
+- name: fetch odoo source
+  become_user: "{{ odoo_user }}"
+  become: yes
   git:
-    repo: {{ odoo_repo }}
-    dest: {{ odoo_dir }}
-    version: {{ odoo_version }}
-  register: odoo_update
+    repo: "{{ odoo_repo }}"
+    dest: "{{ odoo_dir }}"
+    version: "{{ odoo_version }}"
+  register: odoo_source
+  notify: update-odoo
 
 - name: update python environment
   become_user: "{{ odoo_user }}"
   become: yes
-  when: odoo_update
+  when: odoo_source.changed
   shell: pipenv update
   tags: 
-  - full
+  - pipenv
   args:
-    chdir: {{ odoo_dir }}
+    chdir: "{{ odoo_dir }}"
+  notify: update-odoo
   
 - name: check if ~/.local/etc exist
   become_user: "{{ odoo_user }}"
@@ -74,20 +78,24 @@
   template:
     src: templates/odoo.conf
     dest: "{{ odoo_user_home }}/.local/etc/{{ odoo_service }}.conf"
+  notify: update-odoo
         
 - name: copy odoo-cron service config
   become_user: "{{ odoo_user }}"
   become: yes
   template:
     src: templates/odoo-cron.conf
-    dest: "{{ odoo_user_home }}/.local/etc/{{ odoo_service }}-cron.conf"
+    dest: "{{ odoo_user_home }}/.local/etc/{{ odoo_service_cron }}.conf"
+  notify: update-odoo
     
 - name: copy odoo service
   template:
-    src: files/odoo.service
+    src: templates/odoo.service
     dest: /etc/systemd/system/{{ odoo_service }}.service
+  notify: update-odoo
 
 - name: copy odoo cron-service
   template:
-    src: files/odoo-cron.service
-    dest: /etc/systemd/system/{{ odoo_service }}-cron.service
+    src: templates/odoo-cron.service
+    dest: /etc/systemd/system/{{ odoo_service_cron }}.service
+  notify: update-odoo

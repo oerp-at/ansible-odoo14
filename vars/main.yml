@@ -1,6 +1,2 @@
 ---
 # vars file for odoo
-
-odoo_user_home: "/home/{{ odoo_user }}"
-odoo_dir: "/home/{{ odoo_user }}/{{ odoo_instance }}"
-odoo_service: "{{ odoo_instance }}"
