@@ -12,12 +12,12 @@ odoo_queue: false
 odoo_repo: https://github.com/oerp-at/odoo-oerp-14.0-dist.git
 odoo_version: 14.0-oerp
 odoo_user: odoo
-odoo_instance: odoo14
+odoo_name: odoo14
 odoo_cron_port: 10069
 odoo_port: 8069
 odoo_port_longpolling: 8072
 odoo_syslog: true
 odoo_user_home: "/home/{{ odoo_user }}"
-odoo_dir: "/home/{{ odoo_user }}/{{ odoo_instance }}"
-odoo_service: "{{ odoo_instance }}"
+odoo_dir: "/home/{{ odoo_user }}/{{ odoo_name }}"
+odoo_service: "{{ odoo_name }}"
 odoo_service_cron: "{{ odoo_service }}-cron"
