@@ -65,8 +65,7 @@
 
 - name: update python environment
   become_user: "{{ odoo_user }}"
-  become: yes
-  when: res_odoo_source.changed
+  become: yes 
   shell: pipenv update
   tags: 
   - pipenv
