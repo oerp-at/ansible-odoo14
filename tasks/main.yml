@@ -42,7 +42,7 @@
     repo: "{{ odoo_repo }}"
     dest: "{{ odoo_dir }}"
     version: "{{ odoo_version }}"
-  register: odoo_source
+  register: res_odoo_source
   notify: update-odoo
   when: not odoo_checkout_local
 
@@ -53,7 +53,7 @@
 - name: update python environment
   become_user: "{{ odoo_user }}"
   become: yes
-  when: odoo_source.changed
+  when: res_odoo_source.changed
   shell: pipenv update
   tags: 
   - pipenv

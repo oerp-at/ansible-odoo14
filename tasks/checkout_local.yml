@@ -25,4 +25,7 @@
     rsync_opts:
       - "--chown={{ odoo_user }}:{{ odoo_user }}"
       - "--exclude=.git"
+      - "--exclude=Pipfile.lock"
+  register: res_odoo_source
+  notify: update-odoo
     
