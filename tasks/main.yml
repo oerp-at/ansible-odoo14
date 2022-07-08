@@ -44,11 +44,24 @@
     version: "{{ odoo_version }}"
   register: res_odoo_source
   notify: update-odoo
-  when: not odoo_checkout_local
+  when: not odoo_checkout_local and not odoo_source_dir is defined
 
 - name: checkout local and transfer
   include: checkout_local.yml
-  when: odoo_checkout_local
+  when: odoo_checkout_local and not odoo_source_dir is defined
+
+- name: upload source 
+  synchronize: 
+    src: "{{ odoo_source_dir }}/"
+    dest: "{{ odoo_dir }}/"
+    delete: true
+    rsync_opts:
+      - "--chown={{ odoo_user }}:{{ odoo_user }}"
+      - "--exclude=.git"
+      - "--exclude=Pipfile.lock"
+  when: odoo_source_dir is defined
+  register: res_odoo_source
+  notify: update-odoo
 
 - name: update python environment
   become_user: "{{ odoo_user }}"
