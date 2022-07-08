@@ -21,3 +21,5 @@ odoo_user_home: "/home/{{ odoo_user }}"
 odoo_dir: "/home/{{ odoo_user }}/{{ odoo_name }}"
 odoo_service: "{{ odoo_name }}"
 odoo_service_cron: "{{ odoo_service }}-cron"
+odoo_checkout_local: false
+build_dir: "{{ inventory_dir  }}/.build"

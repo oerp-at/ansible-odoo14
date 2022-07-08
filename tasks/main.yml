@@ -44,6 +44,11 @@
     version: "{{ odoo_version }}"
   register: odoo_source
   notify: update-odoo
+  when: not odoo_checkout_local
+
+- name: checkout local and transfer
+  include: checkout_local.yml
+  when: odoo_checkout_local
 
 - name: update python environment
   become_user: "{{ odoo_user }}"
@@ -56,36 +61,36 @@
     chdir: "{{ odoo_dir }}"
   notify: update-odoo
   
-- name: check if ~/.local/etc exist
-  become_user: "{{ odoo_user }}"
-  become: yes
+- name: check if ~/.local/etc exist  
   file:    
     path: "{{ odoo_user_home }}/.local/etc"
     recurse: yes
     state: directory
+    group: "{{ odoo_user }}"
+    owner: "{{ odoo_user }}"
 
-- name: check if ~/log exist
-  become_user: "{{ odoo_user }}"
-  become: yes
+- name: check if ~/log exist  
   file:    
-    path: "{{ odoo_user_home }}/odoo/log"
+    path: "{{ odoo_user_home }}/log"
     recurse: yes
     state: directory
+    group: "{{ odoo_user }}"
+    owner: "{{ odoo_user }}"
 
-- name: copy odoo service config
-  become_user: "{{ odoo_user }}"
-  become: yes
+- name: copy odoo service config  
   template:
     src: templates/odoo.conf
     dest: "{{ odoo_user_home }}/.local/etc/{{ odoo_service }}.conf"
+    group: "{{ odoo_user }}"
+    owner: "{{ odoo_user }}"
   notify: update-odoo
         
-- name: copy odoo-cron service config
-  become_user: "{{ odoo_user }}"
-  become: yes
+- name: copy odoo-cron service config  
   template:
     src: templates/odoo-cron.conf
     dest: "{{ odoo_user_home }}/.local/etc/{{ odoo_service_cron }}.conf"
+    group: "{{ odoo_user }}"
+    owner: "{{ odoo_user }}"
   notify: update-odoo
     
 - name: copy odoo service

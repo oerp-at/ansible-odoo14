@@ -1,0 +1,28 @@
+---
+# tasks file for odoo
+
+- name: create checkout dir
+  become: false
+  local_action:
+    module: file
+    state: directory
+    path: "{{ build_dir }}/{{ odoo_name }}-{{ odoo_version }}"
+  register: res_checkout_dir
+
+- name: fetch odoo source
+  become: false
+  local_action:
+    module: git
+    repo: "{{ odoo_repo }}"
+    dest: "{{ res_checkout_dir.path }}"
+    version: "{{ odoo_version }}"
+
+- name: upload source  
+  synchronize: 
+    src: "{{ res_checkout_dir.path }}/"
+    dest: "{{ odoo_dir }}/"
+    delete: true
+    rsync_opts:
+      - "--chown={{ odoo_user }}:{{ odoo_user }}"
+      - "--exclude=.git"
+    
